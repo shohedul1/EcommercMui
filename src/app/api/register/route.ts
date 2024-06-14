@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { writeFile } from "fs/promises";
 import connect from "../../../lib/mongdb/database";
-import User, { UserDocument } from "../../../lib/models/User";
+import User from "../../../lib/models/User";
 
 interface FormData {
     username: string;
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         console.log(`open ${profileImagePath} to see the uploaded files`);
 
         /* Check if user exists */
-        const existingUser: UserDocument | null = await User.findOne({ email });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             return NextResponse.json({ message: "User already exists!" }, { status: 409 });
         }
