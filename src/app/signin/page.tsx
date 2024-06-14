@@ -184,6 +184,7 @@ const Signin = () => {
                                 margin="normal"
                                 value={formData.email}
                                 onChange={handleChange}
+                                 autoComplete="current-email"
                                 name="email"
                                 type="email"
                                 required
@@ -195,6 +196,7 @@ const Signin = () => {
                                 variant="outlined"
                                 fullWidth
                                 margin="normal"
+                                 autoComplete="current-password"
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
@@ -222,6 +224,7 @@ const Signin = () => {
                             <TextField
                                 label="Confirm Password"
                                 variant="outlined"
+                                 autoComplete="current-password"
                                 fullWidth
                                 margin="normal"
                                 value={formData.confirmPassword}
@@ -282,7 +285,7 @@ const Signin = () => {
                         {/* Sign Up Link */}
                         <Box sx={{ textAlign: "center", marginTop: 2 }}>
                             <Typography variant="body2" color="primary">
-                                Don&apos;t have an account? <Link href="/signup" passHref>Sign Up</Link>
+                                Don&apos;t have an account? <Link href="/login" passHref>Sign Up</Link>
                             </Typography>
                         </Box>
                     </Box>
@@ -294,5 +297,4 @@ const Signin = () => {
 };
 
 export default Signin;
-
 

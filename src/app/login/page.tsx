@@ -77,6 +77,7 @@ const Login = () => {
                             <TextField
                                 label="Email"
                                 variant="outlined"
+                                 autoComplete="current-email"
                                 fullWidth
                                 margin="normal"
                                 value={email}
@@ -86,6 +87,7 @@ const Login = () => {
                             />
                             <TextField
                                 label="Password"
+                                autoComplete="current-password"
                                 variant="outlined"
                                 fullWidth
                                 margin="normal"
