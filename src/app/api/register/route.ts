@@ -4,7 +4,6 @@ import { writeFile } from 'fs/promises';
 import connect from '@/lib/mongdb/database';
 import User from '@/lib/models/User';
 
-/* USER REGISTER */
 export async function POST(req: NextRequest): Promise<NextResponse> {
     try {
         // Connect to MongoDB
@@ -25,6 +24,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
+
+        // Use the /tmp directory for file storage on Vercel
         const profileImagePath = `C:/Users/SNC/Desktop/New folder/my-app/public/uploads/${file.name}`;
         await writeFile(profileImagePath, buffer);
 
@@ -60,8 +61,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             message: "User registered successfully!",
         });
 
-    } catch (err) {
-        console.error(err);
-        return NextResponse.json({ message: "Failed to create new User!" }, { status: 500 });
+    } catch (err:any) {
+        console.error('Error creating new user:', err);
+        return NextResponse.json({ message: "Failed to create new User!", error: err.message }, { status: 500 });
     }
 }
+
