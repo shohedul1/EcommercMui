@@ -41,6 +41,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             return NextResponse.json({ message: "User already exists!" }, { status: 409 });
         }
 
+
         /* Hash the password */
         const saltRounds = 10;
         const hashedPassword = await hash(password, saltRounds);
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         });
 
     } catch (err: any) {
+        console.error("Error creating new user:", err);
         console.error(err);
         return NextResponse.json({ message: "Failed to create new User!" }, { status: 500 });
     }
