@@ -281,7 +281,7 @@ const Signin = () => {
                         {/* Sign Up Link */}
                         <Box sx={{ textAlign: "center", marginTop: 2 }}>
                             <Typography variant="body2" color="primary">
-                                Don't have an account? <Link href="/signup" passHref>Sign Up</Link>
+                                Don&apos;t have an account? <Link href="/signup" passHref>Sign Up</Link>
                             </Typography>
                         </Box>
                     </Box>

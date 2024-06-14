@@ -142,7 +142,7 @@ const Login = () => {
                         </Button>
                         <Box sx={{ textAlign: "center", marginTop: 2 }}>
                             <Typography variant="body2" color="primary">
-                                Don't have an account? <Link href="/signin" passHref>Sign In</Link>
+                                Don&apos;t have an account? <Link href="/signin" passHref>Sign In</Link>
                             </Typography>
                         </Box>
                     </Box>
