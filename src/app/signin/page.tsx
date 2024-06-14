@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from "react";
@@ -21,24 +22,27 @@ interface FormDataType {
     [key: string]: string | File | null;
 }
 
+const initialState: FormDataType = {
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    profileImage: null,
+};
+
 const Signin = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [confirmShowPassword, setConfirmShowPassword] = useState(false);
 
-    const [formData, setFormData] = useState<FormDataType>({
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        profileImage: null,
-    });
+    const [state, setState] = useState<FormDataType>(initialState);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, files } = e.target;
-        setFormData({
-            ...formData,
-            [name]: name === "profileImage" ? (files ? files[0] : null) : value,
-        });
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value, type, files } = event.target as HTMLInputElement;
+        if (type === 'file' && files) {
+            setState({ ...state, [name]: files[0] });
+        } else {
+            setState((prevState) => ({ ...prevState, [name]: value }));
+        }
     };
 
     const router = useRouter();
@@ -46,53 +50,84 @@ const Signin = () => {
     const [passwordMatch, setPasswordMatch] = useState(true);
 
     useEffect(() => {
-        setPasswordMatch(formData.password === formData.confirmPassword);
-    }, [formData.password, formData.confirmPassword]);
+        setPasswordMatch(state.password === state.confirmPassword);
+    }, [state.password, state.confirmPassword]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const { username, email, password } = state;
 
         try {
-            const registerForm = new FormData();
-
-            for (const key in formData) {
-                registerForm.append(key, formData[key] as Blob | string);
+            const profileImage = await uploadImage();
+            if (!profileImage) {
+                toast.error("Image upload failed.");
+                return;
             }
 
-            const response = await fetch(`/api/register`, {
+            const userSingup = {
+                username,
+                email,
+                password,
+                profileImage
+            };
+
+            const response = await fetch('/api/register', {
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 method: "POST",
-                body: registerForm,
+                body: JSON.stringify(userSingup)
             });
 
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                toast.success(data.message, {
-                    position: 'top-center'
-                });
-                setFormData({
-                    username: "",
-                    email: "",
-                    password: "",
-                    confirmPassword: "",
-                    profileImage: null,
-                });
-                setTimeout(() => {
-                    router.push('/login');
-                }, 1000);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    toast.success(data.message, {
+                        position: 'top-center'
+                    });
+                    setState(initialState);
+                    setTimeout(() => {
+                        router.push('/login');
+                    }, 1000);
+                } else {
+                    toast.error(data.message, {
+                        position: 'top-center'
+                    });
+                }
             } else {
-                toast.error(data.message, {
-                    position: 'top-center'
+                toast.error("There was a problem with your request.", {
+                    position: 'top-right'
                 });
             }
-        } catch (err: any) {
-            toast.error("Registration failed: " + err.message, {
-                position: 'top-center'
-            });
-            console.log("Registration failed", err);
+        } catch (error: any) {
+            setState(initialState);
+            toast.error(error.message || "An error occurred");
         }
     };
 
+    const CLOUD_NAME = "djhjt07rh";
+    const UPLOAD_PRESET = "nextjs_blog_images";
+    const uploadImage = async () => {
+        if (!state.profileImage) return null;
+        const formdata = new FormData();
+        formdata.append("file", state.profileImage);
+        formdata.append('upload_preset', UPLOAD_PRESET);
+
+        try {
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                method: "POST",
+                body: formdata
+            });
+            const data = await res.json();
+            return {
+                id: data['public_id'],
+                url: data['secure_url']
+            };
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    };
 
     const loginWithGoogle = () => {
         signIn("google", { callbackUrl: "/" });
@@ -127,7 +162,6 @@ const Signin = () => {
                             Register an account
                         </Typography>
                         <form style={{ width: "100%" }} onSubmit={handleSubmit}>
-
                             <label htmlFor="image" style={{ display: "flex", flexDirection: "column", alignItems: 'center' }}>
                                 <DownloadForOfflineIcon sx={{ textAlign: 'center' }} />
                                 <Typography variant="body1" sx={{ color: "black" }}>
@@ -143,33 +177,29 @@ const Signin = () => {
                                 />
                             </label>
 
-                            {/* Display Profile Photo */}
-                            {formData.profileImage && (
+                            {state.profileImage && (
                                 <Box sx={{
                                     display: "flex",
                                     flexDirection: "column",
                                     alignItems: 'center',
                                 }}>
                                     <img
-                                        src={URL.createObjectURL(formData.profileImage)}
+                                        src={URL.createObjectURL(state.profileImage)}
                                         alt="Profile"
                                         style={{
                                             maxWidth: '80px',
                                             maxHeight: '80px',
                                             marginTop: '10px',
                                             borderRadius: "50%",
-
                                         }}
                                     />
-
                                 </Box>
                             )}
 
-                            {/* Username Input */}
                             <TextField
                                 label="Username"
                                 name="username"
-                                value={formData.username}
+                                value={state.username}
                                 onChange={handleChange}
                                 variant="outlined"
                                 fullWidth
@@ -177,13 +207,12 @@ const Signin = () => {
                                 required
                             />
 
-                            {/* Email Input */}
                             <TextField
                                 label="Email"
                                 variant="outlined"
                                 fullWidth
                                 margin="normal"
-                                value={formData.email}
+                                value={state.email}
                                 onChange={handleChange}
                                 autoComplete="current-email"
                                 name="email"
@@ -191,7 +220,6 @@ const Signin = () => {
                                 required
                             />
 
-                            {/* Password Input */}
                             <TextField
                                 label="Password"
                                 variant="outlined"
@@ -199,7 +227,7 @@ const Signin = () => {
                                 margin="normal"
                                 autoComplete="new-password"
                                 name="password"
-                                value={formData.password}
+                                value={state.password}
                                 onChange={handleChange}
                                 type={showPassword ? "text" : "password"}
                                 required
@@ -218,24 +246,21 @@ const Signin = () => {
                                 }}
                             />
 
-                          
-
                             {!passwordMatch && (
                                 <p style={{ color: "red" }}>Passwords are not matched!</p>
                             )}
-                            {/* Confirm Password Input */}
+
                             <TextField
                                 label="Confirm Password"
                                 variant="outlined"
                                 autoComplete="current-password"
                                 fullWidth
                                 margin="normal"
-                                value={formData.confirmPassword}
+                                value={state.confirmPassword}
                                 onChange={handleChange}
                                 name="confirmPassword"
                                 required
                                 type={confirmShowPassword ? "text" : "password"}
-
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
@@ -251,7 +276,6 @@ const Signin = () => {
                                 }}
                             />
 
-                            {/* Login Button */}
                             <Button
                                 type="submit"
                                 fullWidth
@@ -268,7 +292,6 @@ const Signin = () => {
                                 Login
                             </Button>
                         </form>
-                        {/* Login with Google Button */}
                         <Button
                             fullWidth
                             variant="contained"
@@ -285,7 +308,6 @@ const Signin = () => {
                         >
                             Log In with Google
                         </Button>
-                        {/* Sign Up Link */}
                         <Box sx={{ textAlign: "center", marginTop: 2 }}>
                             <Typography variant="body2" color="primary">
                                 Don&apos;t have an account? <Link href="/login" passHref>Sign Up</Link>

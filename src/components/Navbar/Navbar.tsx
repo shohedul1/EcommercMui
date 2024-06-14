@@ -1,4 +1,5 @@
 'use client';
+
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -60,8 +61,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Navbar() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-        React.useState<null | HTMLElement>(null);
+    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -83,18 +83,18 @@ export default function Navbar() {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
-    const handSingOut = () => {
+    const handleSignOut = () => {
         signOut({ callbackUrl: "/login" });
         setAnchorEl(null);
         handleMobileMenuClose();
     }
 
     const { data: session } = useSession();
-    console.log(session)
+    console.log(session);
 
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
-        <Box sx={{ bgcolor: 'white', }}>
+        <Box sx={{ bgcolor: 'white' }}>
             <Menu
                 anchorEl={anchorEl}
                 id={menuId}
@@ -104,67 +104,30 @@ export default function Navbar() {
             >
                 {session ? (
                     <Box sx={{ p: 2 }}>
-                        <Link passHref href="/user/wishlist" style={{ color: 'black', textDecoration: 'none', }}>
-                            <MenuItem onClick={handleMenuClose} sx={{
-                                fontSize: '15px', fontWeight: 900, '&:hover': {
-                                    color: "red" // Change text color to red on hover
-                                },
-                            }}>Wishlist</MenuItem>
+                        <Link passHref href="/user/wishlist" style={{ color: 'black', textDecoration: 'none' }}>
+                            <MenuItem onClick={handleMenuClose} sx={{ fontSize: '15px', fontWeight: 900, '&:hover': { color: "red" } }}>Wishlist</MenuItem>
                         </Link>
-                        <Link passHref href="/user/cart" style={{ color: 'black', textDecoration: "none", }}>
-                            <MenuItem onClick={handleMenuClose} sx={{
-                                fontSize: '15px', fontWeight: 900, '&:hover': {
-                                    color: "red" // Change text color to red on hover
-                                },
-                            }}>Cart</MenuItem>
+                        <Link passHref href="/user/cart" style={{ color: 'black', textDecoration: "none" }}>
+                            <MenuItem onClick={handleMenuClose} sx={{ fontSize: '15px', fontWeight: 900, '&:hover': { color: "red" } }}>Cart</MenuItem>
                         </Link>
-                        <Link passHref href="/user/order" style={{ color: 'black', textDecoration: "none", }}>
-                            <MenuItem onClick={handleMenuClose} sx={{
-                                fontSize: '15px', fontWeight: 900, '&:hover': {
-                                    color: "red" // Change text color to red on hover
-                                },
-                            }}>Order</MenuItem>
+                        <Link passHref href="/user/order" style={{ color: 'black', textDecoration: "none" }}>
+                            <MenuItem onClick={handleMenuClose} sx={{ fontSize: '15px', fontWeight: 900, '&:hover': { color: "red" } }}>Order</MenuItem>
                         </Link>
-                        <Link passHref href="/user/shop" style={{ color: 'black', textDecoration: "none", }}>
-                            <MenuItem onClick={handleMenuClose} sx={{
-                                fontSize: '15px', fontWeight: 900, '&:hover': {
-                                    color: "red" // Change text color to red on hover
-                                },
-                            }}>Your Shop</MenuItem>
+                        <Link passHref href="/user/shop" style={{ color: 'black', textDecoration: "none" }}>
+                            <MenuItem onClick={handleMenuClose} sx={{ fontSize: '15px', fontWeight: 900, '&:hover': { color: "red" } }}>Your Shop</MenuItem>
                         </Link>
-                        <Link passHref href="/user/create-work" style={{ color: 'black', textDecoration: "none", }}>
-                            <MenuItem onClick={handleMenuClose} sx={{
-                                fontSize: '15px', fontWeight: 900, '&:hover': {
-                                    color: "red" // Change text color to red on hover
-                                },
-                            }}>Sell Your Work</MenuItem>
+                        <Link passHref href="/user/create-work" style={{ color: 'black', textDecoration: "none" }}>
+                            <MenuItem onClick={handleMenuClose} sx={{ fontSize: '15px', fontWeight: 900, '&:hover': { color: "red" } }}>Sell Your Work</MenuItem>
                         </Link>
-                        <MenuItem
-                            sx={{
-                                fontSize: '15px', fontWeight: 900, '&:hover': {
-                                    color: "red" // Change text color to red on hover
-                                },
-                            }}
-
-                            onClick={handSingOut}>
-                            logout
-                        </MenuItem>
+                        <MenuItem onClick={handleSignOut} sx={{ fontSize: '15px', fontWeight: 900, '&:hover': { color: "red" } }}>Logout</MenuItem>
                     </Box>
                 ) : (
                     <Box sx={{ px: 4.5 }}>
-                        <Link passHref href="/login" style={{ color: 'black', textDecoration: 'none', }}>
-                            <MenuItem onClick={handleMenuClose} sx={{
-                                fontSize: '15px', fontWeight: 900, '&:hover': {
-                                    color: "red" // Change text color to red on hover
-                                },
-                            }}>LogIn</MenuItem>
+                        <Link passHref href="/login" style={{ color: 'black', textDecoration: 'none' }}>
+                            <MenuItem onClick={handleMenuClose} sx={{ fontSize: '15px', fontWeight: 900, '&:hover': { color: "red" } }}>Log In</MenuItem>
                         </Link>
-                        <Link passHref href="/signin" style={{ color: 'black', textDecoration: "none", }}>
-                            <MenuItem onClick={handleMenuClose} sx={{
-                                fontSize: '15px', fontWeight: 900, '&:hover': {
-                                    color: "red" // Change text color to red on hover
-                                },
-                            }}>SignIn</MenuItem>
+                        <Link passHref href="/signin" style={{ color: 'black', textDecoration: "none" }}>
+                            <MenuItem onClick={handleMenuClose} sx={{ fontSize: '15px', fontWeight: 900, '&:hover': { color: "red" } }}>Sign In</MenuItem>
                         </Link>
                     </Box>
                 )}
@@ -189,7 +152,6 @@ export default function Navbar() {
                 </IconButton>
                 <p>Cart</p>
             </MenuItem>
-
             <MenuItem onClick={handleProfileMenuOpen}>
                 <IconButton
                     size="large"
@@ -200,8 +162,12 @@ export default function Navbar() {
                 >
                     {session ? (
                         <Avatar
-                            alt="Remy Sharp"
-                            src="https://res.cloudinary.com/djhjt07rh/image/upload/v1717607036/next.js_blog_images/rs4otnmin2w5jg7j4d0s.jpg"
+                            alt="User Avatar"
+                            src={
+                                typeof session?.user?.profileImagePath === "string"
+                                    ? session?.user?.profileImagePath // If it's already a string (direct URL)
+                                    : session?.user?.profileImagePath?.url // If it's an object, access the url property
+                            }
                         />
                     ) : (
                         <AccountCircle />
@@ -235,9 +201,7 @@ export default function Navbar() {
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{
-                            display: { xs: 'none', sm: 'block' },
-                        }}
+                        sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
                         Ecommerce
                     </Typography>
@@ -272,8 +236,12 @@ export default function Navbar() {
                         >
                             {session ? (
                                 <Avatar
-                                    alt="Remy Sharp"
-                                    src={session?.user?.profileImagePath ?? session?.user?.image ?? ''}
+                                    alt="User Avatar"
+                                    src={
+                                        typeof session?.user?.profileImagePath === "string"
+                                            ? session?.user?.profileImagePath // If it's already a string (direct URL)
+                                            : session?.user?.profileImagePath?.url // If it's an object, access the url property
+                                    }
                                 />
                             ) : (
                                 <AccountCircle />
@@ -299,4 +267,3 @@ export default function Navbar() {
         </Box>
     );
 }
-

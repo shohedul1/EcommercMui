@@ -10,19 +10,22 @@ interface ExtendedProfile extends Profile {
     picture?: string;
 }
 
-// Extend the Session type to include id in user
-declare module "next-auth" {
+// Define the ProfileImagePath interface
+interface ProfileImagePath {
+    id: string;
+    url: string;
+}
 
+// Extend the Session type to include id and profileImagePath in user
+declare module "next-auth" {
     interface Session {
         user: {
             id: string;
             name?: string | null;
             email?: string | null;
-            image?: string | null;
-            profileImagePath?: string | null; // Add profileImagePath property if missing
+            profileImagePath?: ProfileImagePath | null; // Add profileImagePath property
         };
     }
-
 }
 
 export const authOptions: NextAuthOptions = {

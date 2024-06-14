@@ -11,8 +11,8 @@ const UserSchema = new Schema({
         type: String,
     },
     profileImagePath: {
-        type: String,
-        required: [true, "Profile image is required"],
+        type: Object,
+        require: true
     },
     works: {
         type: Array,

@@ -1,62 +1,67 @@
-import connect from "@/lib/mongdb/database";
-import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
-import { hash } from "bcryptjs";
-import User from "../../../lib/models/User";
+import bcrypt from "bcryptjs";
+import connect from "@/lib/mongdb/database";
+import User from "@/lib/models/User";
 
 export const POST = async (req: NextRequest) => {
-    const path = require("path");
-    const currentWorkingDirectory = process.cwd();
-    const uploadsDirectory = process.env.UPLOADS_DIR || path.join(currentWorkingDirectory, "public", "uploads");
+    const { username, email, password, profileImage } = await req.json();
+
+    if (!profileImage) {
+        return NextResponse.json({
+            success: false,
+            error: true,
+            message: "Upload profile image"
+        });
+    }
+
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (profileImage.size > maxSize) {
+        return NextResponse.json({
+            success: false,
+            error: true,
+            message: "Profile image 5MB too large"
+        });
+    }
+
+    await connect();
+
+    const isExisting = await User.findOne({ email });
+
+    if (isExisting) {
+        return NextResponse.json({
+            success: false,
+            error: true,
+            message: "User already exists"
+        });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 5);
+    if (!hashedPassword) {
+        return NextResponse.json({
+            success: false,
+            error: true,
+            message: "Password hashing failed"
+        });
+    }
+
+    const newUser = new User({
+        username,
+        email,
+        password: hashedPassword,
+        profileImagePath: profileImage
+    });
 
     try {
-        await connect();
-
-        const data = await req.formData();
-        const username = data.get('username') as string;
-        const email = data.get('email') as string;
-        const password = data.get('password') as string;
-        const file = data.get('profileImage') as File;
-
-        if (!file) {
-            return new Response(JSON.stringify({ message: "No file uploaded" }), { status: 400 });
-        }
-
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        const postPhotoPath = path.join(uploadsDirectory, file.name);
-
-        await writeFile(postPhotoPath, buffer);
-
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return new Response(JSON.stringify({ message: "User already exists!" }), { status: 409 });
-        }
-
-        /* Hash the password */
-        const saltRounds = 10;
-        const hashedPassword = await hash(password, saltRounds);
-
-        /* Create a new User */
-        const newUser = new User({
-            username,
-            email,
-            password: hashedPassword,
-            profileImagePath: `/uploads/${file.name}` // Store relative path in the database
-        });
-
         await newUser.save();
-
-        /* Send a success message */
-        return new Response(JSON.stringify({
-            message: "User registered successfully!",
-            user: newUser,
-            success: true
-        }), { status: 200 });
-
+        return NextResponse.json({
+            success: true,
+            error: false,
+            message: "User created successfully"
+        });
     } catch (err) {
-        console.error("Error creating new user:", err);
-        return new Response(JSON.stringify({ message: "Failed to create a new user" }), { status: 500 });
+        return NextResponse.json({
+            message: err.message,
+            status: 500,
+        });
     }
 };
