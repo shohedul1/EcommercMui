@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { mkdir, writeFile } from "fs/promises";
-import { dirname } from "path";
+import { dirname, join } from "path"; // Import join for path manipulation
 import connect from "../../../lib/mongdb/database";
 import User from "../../../lib/models/User";
 
@@ -25,10 +25,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
+        // Constructing the file path dynamically using `join` for cross-platform compatibility
+        const profileImageDir = join(process.cwd(), 'public', 'uploads');
+        const profileImagePath = join(profileImageDir, file.name);
+
         // Ensure directory exists before writing the file
-        const profileImagePath = `C:/Users/SNC/Desktop/New folder/my-app/public/uploads/${file.name}`;
-        const directory = dirname(profileImagePath);
-        await mkdir(directory, { recursive: true }); // Create directories recursively if they don't exist
+        await mkdir(profileImageDir, { recursive: true }); // Create directories recursively if they don't exist
 
         // Write file to the specified path
         await writeFile(profileImagePath, buffer);
