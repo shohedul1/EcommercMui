@@ -25,10 +25,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         const buffer = Buffer.from(bytes);
 
         // Define the path to save the profile image
-        const profileImagePath = `public/uploads/${file.name}`;
+        const profileImagePath = `/uploads/${file.name}`
 
-        // Ensure directory exists before writing the file
-        await mkdir('public/uploads', { recursive: true }); // Create directories recursively if they don't exist
 
         // Write file to the specified path
         await writeFile(profileImagePath, buffer);
