@@ -19,7 +19,7 @@ const Feed = () => {
                 py: { xs: 2, sm: 3, md: 5 },
                 px: { xs: 2, sm: 4, md: 6 },
                 border: "1px solid black",
-              
+
             }}>
                 {categories.map((item, index) => (
                     <Typography
