@@ -59,7 +59,7 @@ const Signin = () => {
                 registerForm.append(key, formData[key] as Blob | string);
             }
 
-            const response = await fetch("/api/register", {
+            const response = await fetch(`/api/register`, {
                 method: "POST",
                 body: registerForm,
             });
@@ -92,6 +92,7 @@ const Signin = () => {
             console.log("Registration failed", err);
         }
     };
+
 
     const loginWithGoogle = () => {
         signIn("google", { callbackUrl: "/" });
