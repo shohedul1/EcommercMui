@@ -1,46 +1,41 @@
+import connect from "@/lib/mongdb/database"
+import { writeFile } from "fs/promises"
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
-import { mkdir, writeFile } from "fs/promises";
-import { join } from "path"; // Import join for path manipulation
-import connect from "../../../lib/mongdb/database";
 import User from "../../../lib/models/User";
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+export const POST = async (req: NextRequest) => {
+    const path = require("path")
+    const currentWorkingDirectory = process.cwd()
+
     try {
-        /* Connect to MongoDB */
-        await connect();
+        await connect()
 
-        const data = await req.formData();
-
-        /* Take information from the form */
+        const data = await req.formData()
         const username = data.get('username') as string;
         const email = data.get('email') as string;
         const password = data.get('password') as string;
         const file = data.get('profileImage') as File;
 
         if (!file) {
-            return NextResponse.json({ message: "No file uploaded" }, { status: 400 });
+            return new Response(JSON.stringify({ message: "No file uploaded" }), { status: 400 });
         }
 
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
+        const bytes = await file.arrayBuffer()
+        const buffer = Buffer.from(bytes)
 
-        // Define the path to save the profile image
-        const uploadsDir = join(process.cwd(), 'public', 'uploads'); // Ensure correct path
-        const profileImagePath = join(uploadsDir, file.name);
+        const postPhotoPath = path.join(
+            currentWorkingDirectory,
+            "public",
+            "uploads",
+            file.name
+        )
 
-        // Ensure directory exists before writing the file
-        await mkdir(uploadsDir, { recursive: true }); // Create directories recursively if they don't exist
+        await writeFile(postPhotoPath, buffer)
 
-        // Write file to the specified path
-        await writeFile(profileImagePath, buffer);
-
-        console.log(`Uploaded profile image saved at ${profileImagePath}`);
-
-        /* Check if user exists */
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return NextResponse.json({ message: "User already exists!" }, { status: 409 });
+            return new Response(JSON.stringify({ message: "User already exists!" }), { status: 409 });
         }
 
         /* Hash the password */
@@ -55,18 +50,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             profileImagePath: `/uploads/${file.name}` // Store relative path in the database
         });
 
-        /* Save new User */
         await newUser.save();
 
         /* Send a success message */
-        return NextResponse.json({
+        return new Response(JSON.stringify({
             message: "User registered successfully!",
             user: newUser,
-            success: true
-        });
+            success: true,
+            error: false,
+            status: true,
+        }),);
 
-    } catch (err: any) {
-        console.error("Error creating new user:", err);
-        return NextResponse.json({ message: "Failed to create new User!" + err }, { status: 500 });
+    } catch (err) {
+        console.error(err)
+        return new Response(JSON.stringify({ message: "Failed to create a new post" }), { status: 500 })
     }
 }
