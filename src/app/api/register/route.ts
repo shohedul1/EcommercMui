@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
-import { writeFile } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
+import { dirname } from "path";
 import connect from "../../../lib/mongdb/database";
 import User from "../../../lib/models/User";
-
-interface FormData {
-    username: string;
-    email: string;
-    password: string;
-    profileImage: File;
-}
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
     try {
@@ -30,17 +24,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
+
+        // Ensure directory exists before writing the file
         const profileImagePath = `C:/Users/SNC/Desktop/New folder/my-app/public/uploads/${file.name}`;
+        const directory = dirname(profileImagePath);
+        await mkdir(directory, { recursive: true }); // Create directories recursively if they don't exist
+
+        // Write file to the specified path
         await writeFile(profileImagePath, buffer);
 
-        console.log(`open ${profileImagePath} to see the uploaded files`);
+        console.log(`Uploaded profile image saved at ${profileImagePath}`);
 
         /* Check if user exists */
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return NextResponse.json({ message: "User already exists!" }, { status: 409 });
         }
-
 
         /* Hash the password */
         const saltRounds = 10;
@@ -66,7 +65,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     } catch (err: any) {
         console.error("Error creating new user:", err);
-        console.error(err);
         return NextResponse.json({ message: "Failed to create new User!" + err }, { status: 500 });
     }
 }
