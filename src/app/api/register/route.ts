@@ -60,8 +60,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         return NextResponse.json({
             message: "User registered successfully!",
             user: newUser,
-            success: true,
-            status: false,
+            success: true
         });
 
     } catch (err: any) {

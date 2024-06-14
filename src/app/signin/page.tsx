@@ -1,16 +1,16 @@
-
 'use client';
-import { useEffect, useState } from "react";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Box, Button, Container, TextField, Typography, IconButton, InputAdornment } from "@mui/material";
 import { Google as GoogleIcon } from "@mui/icons-material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import Notification from "@/components/Notification/Notification";
 import { toast } from "react-toastify";
+import Notification from "@/components/Notification/Notification";
+import { useRouter } from "next/navigation";
 
 interface FormDataType {
     username: string;
@@ -97,7 +97,7 @@ const Signin = () => {
     const loginWithGoogle = () => {
         signIn("google", { callbackUrl: "/" });
     };
-    console.log(formData);
+
     return (
         <>
             <Container maxWidth="sm">
@@ -124,7 +124,7 @@ const Signin = () => {
                         }}
                     >
                         <Typography variant="h5" sx={{ marginBottom: 3, textAlign: "center", color: "black" }}>
-                            Login to your account
+                            Register an account
                         </Typography>
                         <form style={{ width: "100%" }} onSubmit={handleSubmit}>
 
@@ -165,9 +165,9 @@ const Signin = () => {
                                 </Box>
                             )}
 
-                            {/* Email Input */}
+                            {/* Username Input */}
                             <TextField
-                                label="Name"
+                                label="Username"
                                 name="username"
                                 value={formData.username}
                                 onChange={handleChange}
@@ -175,8 +175,9 @@ const Signin = () => {
                                 fullWidth
                                 margin="normal"
                                 required
-
                             />
+
+                            {/* Email Input */}
                             <TextField
                                 label="Email"
                                 variant="outlined"
@@ -184,25 +185,24 @@ const Signin = () => {
                                 margin="normal"
                                 value={formData.email}
                                 onChange={handleChange}
-                                 autoComplete="current-email"
+                                autoComplete="current-email"
                                 name="email"
                                 type="email"
                                 required
-
                             />
+
                             {/* Password Input */}
                             <TextField
                                 label="Password"
                                 variant="outlined"
                                 fullWidth
                                 margin="normal"
-                                 autoComplete="current-password"
+                                autoComplete="new-password"
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
                                 type={showPassword ? "text" : "password"}
                                 required
-
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
@@ -217,6 +217,9 @@ const Signin = () => {
                                     )
                                 }}
                             />
+
+                          
+
                             {!passwordMatch && (
                                 <p style={{ color: "red" }}>Passwords are not matched!</p>
                             )}
@@ -224,7 +227,7 @@ const Signin = () => {
                             <TextField
                                 label="Confirm Password"
                                 variant="outlined"
-                                 autoComplete="current-password"
+                                autoComplete="current-password"
                                 fullWidth
                                 margin="normal"
                                 value={formData.confirmPassword}
@@ -297,4 +300,3 @@ const Signin = () => {
 };
 
 export default Signin;
-
