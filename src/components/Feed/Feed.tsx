@@ -15,7 +15,7 @@ const Feed = () => {
                 flexWrap: "wrap",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: { xs: 2, sm: 5, md: 8 },
+                gap: 5,
                 py: { xs: 2, sm: 3, md: 5 },
                 px: { xs: 2, sm: 4, md: 6 },
                 border: "1px solid black",
