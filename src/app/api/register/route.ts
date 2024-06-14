@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { mkdir, writeFile } from "fs/promises";
+import { join } from "path"; // Import join for path manipulation
 import connect from "../../../lib/mongdb/database";
 import User from "../../../lib/models/User";
 
@@ -25,8 +26,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         const buffer = Buffer.from(bytes);
 
         // Define the path to save the profile image
-        const profileImagePath = `/uploads/${file.name}`
+        const uploadsDir = join(process.cwd(), 'public', 'uploads'); // Ensure correct path
+        const profileImagePath = join(uploadsDir, file.name);
 
+        // Ensure directory exists before writing the file
+        await mkdir(uploadsDir, { recursive: true }); // Create directories recursively if they don't exist
 
         // Write file to the specified path
         await writeFile(profileImagePath, buffer);
@@ -48,7 +52,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             username,
             email,
             password: hashedPassword,
-            profileImagePath: `/uploads/${file.name}`
+            profileImagePath: `/uploads/${file.name}` // Store relative path in the database
         });
 
         /* Save new User */
