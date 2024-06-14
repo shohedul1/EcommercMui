@@ -1,17 +1,18 @@
-import connect from "@/lib/mongdb/database"
-import { writeFile } from "fs/promises"
+import connect from "@/lib/mongdb/database";
+import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import User from "../../../lib/models/User";
 
 export const POST = async (req: NextRequest) => {
-    const path = require("path")
-    const currentWorkingDirectory = process.cwd()
+    const path = require("path");
+    const currentWorkingDirectory = process.cwd();
+    const uploadsDirectory = path.join(currentWorkingDirectory, "public", "uploads");
 
     try {
-        await connect()
+        await connect();
 
-        const data = await req.formData()
+        const data = await req.formData();
         const username = data.get('username') as string;
         const email = data.get('email') as string;
         const password = data.get('password') as string;
@@ -21,17 +22,12 @@ export const POST = async (req: NextRequest) => {
             return new Response(JSON.stringify({ message: "No file uploaded" }), { status: 400 });
         }
 
-        const bytes = await file.arrayBuffer()
-        const buffer = Buffer.from(bytes)
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
 
-        const postPhotoPath = path.join(
-            currentWorkingDirectory,
-            "public",
-            "uploads",
-            file.name
-        )
+        const postPhotoPath = path.join(uploadsDirectory, file.name);
 
-        await writeFile(postPhotoPath, buffer)
+        await writeFile(postPhotoPath, buffer);
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -56,13 +52,11 @@ export const POST = async (req: NextRequest) => {
         return new Response(JSON.stringify({
             message: "User registered successfully!",
             user: newUser,
-            success: true,
-            error: false,
-            status: true,
-        }),);
+            success: true
+        }), { status: 200 });
 
     } catch (err) {
-        console.error(err)
-        return new Response(JSON.stringify({ message: "Failed to create a new post" }), { status: 500 })
+        console.error("Error creating new user:", err);
+        return new Response(JSON.stringify({ message: "Failed to create a new user" }), { status: 500 });
     }
-}
+};
