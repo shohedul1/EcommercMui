@@ -7,7 +7,7 @@ import User from "../../../lib/models/User";
 export const POST = async (req: NextRequest) => {
     const path = require("path");
     const currentWorkingDirectory = process.cwd();
-    const uploadsDirectory = path.join(currentWorkingDirectory, "public", "uploads");
+    const uploadsDirectory = process.env.UPLOADS_DIR || path.join(currentWorkingDirectory, "public", "uploads");
 
     try {
         await connect();
