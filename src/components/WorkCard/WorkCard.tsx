@@ -86,7 +86,7 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
         }
     }
     return (
-        <Grid item lg={3} md={4} sm={6} xs={12} px={2} position={"relative"} onClick={() => {
+        <Grid item lg={3} md={4} sm={6} xs={12} p={2} position={"relative"} onClick={() => {
             router.push(`/user/work-details?id=${work._id}`);
         }}>
             <Card sx={{ maxWidth: 455 }}>
@@ -152,7 +152,7 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
                                 ${price}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {description.substring(0, 40)}
+                                {description.substring(0, 35)}
                             </Typography>
                             <Box
                                 sx={{
