@@ -1,22 +1,27 @@
-import { Box, CardMedia, Grid } from '@mui/material';
-import React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Image from 'next/image';
+
+'use client';
+import React, { useState } from 'react';
+import { Box, Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { useSession } from 'next-auth/react';
+import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface WorkPhotoPath {
     id: string;
     url: string;
 }
 
+
 interface Creator {
     email: string;
     profileImagePath: string | { url: string };
     username: string;
+    _id: string; // Add _id property if it exists
 }
+
 
 interface Work {
     category: string;
@@ -25,51 +30,123 @@ interface Work {
     price: number;
     title: string;
     workPhotoPaths: WorkPhotoPath[];
+    _id: string
 }
 
 interface WorkProps {
     work: Work;
 }
 
-
 const WorkCard: React.FC<WorkProps> = ({ work }) => {
+    const { title, description, price, workPhotoPaths, creator, category } = work;
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const router = useRouter();
     console.log(work)
-    const { title, description, price, workPhotoPaths, creator,category} = work;
-    const imageUrl = workPhotoPaths.length > 0 ? workPhotoPaths[0].url : 'default-image-url';
 
+    const goToNextSlide = () => {
+        setCurrentIndex(prevIndex => (prevIndex + 1) % workPhotoPaths.length);
+    };
+
+    const goToPrevSlide = () => {
+        setCurrentIndex(prevIndex => (prevIndex - 1 + workPhotoPaths.length) % workPhotoPaths.length);
+    };
+
+    const handlePrevSlideClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.stopPropagation();
+        goToPrevSlide();
+    };
+
+    const handleNextSlideClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.stopPropagation();
+        goToNextSlide();
+    };
+
+
+    const { data: session } = useSession();
+    const userId = session?.user?.id;
+
+    const commonList = {
+        position: 'absolute',
+        right: 40,
+        top: 50,
+
+        fontSize: '20px',
+        cursor: "pointer",
+        zIndex: 50,
+        p: 1,
+        bgcolor: "white",
+        color: "black",
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: 'center',
+        "&:hover": {
+            bgcolor: 'black',
+            color: "red"
+
+        }
+    }
     return (
-        <Grid item lg={3} md={4} sm={6} xs={12} mb={2}>
-            <Card sx={{ maxWidth: 455 }} className='hidden'>
-                <div style={{ position: 'relative' }}>
-                    <Link href="/">
-                        <Image
-                            src={imageUrl}
-                            width={500}
-                            height={500}
-                            priority
-                            alt='image'
-                            style={{ height: 200, width: '100%' }}
-                        />
-                    </Link>
-
-                    <FavoriteIcon
+        <Grid item lg={3} md={4} sm={6} xs={12} px={2} position={"relative"} onClick={() => {
+            router.push(`/user/work-details?id=${work._id}`);
+        }}>
+            <Card sx={{ maxWidth: 455 }}>
+                <Box position="relative" display="flex" flex="none" width="100%" height={270} alignItems="center" overflow="hidden">
+                    <CardMedia
+                        component="img"
+                        image={workPhotoPaths[currentIndex]?.url || 'default-image-url'}
+                        alt="Work Image"
                         sx={{
-                            position: 'absolute',
-                            top: 4,
-                            right: 4,
-                            color: 'yellow',
-                            '&:hover': {
-                                color: 'black', // optional, change text color on hover
-                            },
-                            "&:active": { color: 'red' }
+                            height: '100%',
+                            width: '100%',
+                            objectFit: 'cover', // Ensure image covers the entire box without distortion
                         }}
                     />
-                </div>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            left: 10,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            p: 1.5,
+                            borderRadius: '50%',
+                            cursor: 'pointer',
+                            bgcolor: 'white',
+                            opacity: 0.5,
+                            zIndex: 99,
+                            '&:hover': {
+                                bgcolor: 'white',
+                            },
+                        }}
+                        onClick={handlePrevSlideClick}
+                    >
+                        <ArrowBackIosNewIcon />
+                    </Box>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            right: 10,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            p: 1.5,
+                            borderRadius: '50%',
+                            cursor: 'pointer',
+                            bgcolor: 'white',
+                            opacity: 0.5,
+                            zIndex: 99,
+                            '&:hover': {
+                                bgcolor: 'white',
+                            },
+                        }}
+                        onClick={handleNextSlideClick}
+                    >
+                        <ArrowForwardIosIcon />
+                    </Box>
+                </Box>
                 <CardContent>
-                    <Typography variant="h5" className='title' sx={{ marginBottom: '5px' }}>
+                    <Typography variant="h5" className="title" sx={{ marginBottom: '5px' }}>
                         {title}
                     </Typography>
-                    <Grid display={'flex'} justifyContent={"space-between"} marginY={1}>
+                    <Grid display={'flex'} justifyContent={'space-between'} marginY={1}>
                         <Grid display={'flex'} flexDirection={'column'} gap={1}>
                             <Typography sx={{ fontWeight: 'bold' }}>
                                 ${price}
@@ -79,42 +156,55 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
                             </Typography>
                             <Box
                                 sx={{
-                                    display: "flex",
-                                    alignItems:'center',
-                                    gap:1
-                                    
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1,
                                 }}
                             >
                                 <CardMedia
                                     component="img"
-                                    image={typeof creator.profileImagePath === 'string'
-                                        ? creator.profileImagePath
-                                        : creator.profileImagePath.url
-                                    }
+                                    image={typeof creator.profileImagePath === 'string' ? creator.profileImagePath : creator.profileImagePath.url}
                                     alt="Creator's Profile Image"
                                     sx={{
-                                        height: 40 ,        
-                                         width: 40,
-                                        objectFit: 'fill',  
-                                        borderRadius:"50%"
+                                        height: 40,
+                                        width: 40,
+                                        objectFit: 'fill',
+                                        borderRadius: '50%',
                                     }}
                                 />
                                 <Typography
-                                sx={{
-                                    fontWeight:700,
-                                    color:"green"
-                                }}
-                                >{creator.username}</Typography>
+                                    sx={{
+                                        fontWeight: 700,
+                                        color: 'green',
+                                    }}
+                                >
+                                    {creator.username}
+                                </Typography>
                                 <Typography>in</Typography>
                                 <Typography>{category}</Typography>
-
                             </Box>
                         </Grid>
                     </Grid>
                 </CardContent>
             </Card>
+
+            {userId === work?.creator?._id ? (
+                <Box
+                    sx={commonList}
+                >
+                    <DeleteIcon />
+                </Box>
+            ) : (
+                <Box
+                    sx={commonList}
+                >
+                    <FavoriteIcon />
+                </Box>
+
+            )}
         </Grid>
     );
 };
 
 export default WorkCard;
+
