@@ -2,13 +2,29 @@
 
 import { categories } from "@/lib/CategoriesData/data";
 import { Box, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import WorkList from "../WorkList/WorkList";
 
 const Feed = () => {
-    const [selectedCategory, setSelectedCategory] = useState("All");
+    const [loading, setLoading] = useState(true);
 
-    return (
+    const [selectedCategory, setSelectedCategory] = useState("All");
+    const [workList, setWorkList] = useState([]);
+
+    const getWorkList = async () => {
+        const response = await fetch(`/api/work/list/${selectedCategory}`);
+        const data = await response.json();
+        setWorkList(data);
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        getWorkList();
+    }, [selectedCategory]);
+
+    return loading ? (
+        <div>loadin...</div>
+    ) : (
         <>
             <Box sx={{
                 display: "flex",
@@ -40,8 +56,10 @@ const Feed = () => {
                     </Typography>
                 ))}
             </Box>
-            <WorkList />
+            <WorkList workList={workList} />
         </>
+
+
     )
 }
 

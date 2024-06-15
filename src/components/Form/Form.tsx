@@ -24,6 +24,7 @@ interface FormProps {
         photos: File[]; // Change photos type to File[]
     }>>;
     handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    loader: boolean;
 }
 
 const CategoryItem = styled(Typography, {
@@ -40,7 +41,7 @@ const CategoryItem = styled(Typography, {
     }
 `;
 
-const Form: React.FC<FormProps> = ({ type, work, setWork, handleSubmit }) => {
+const Form: React.FC<FormProps> = ({ type, work, setWork, handleSubmit, loader }) => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target;
@@ -65,7 +66,6 @@ const Form: React.FC<FormProps> = ({ type, work, setWork, handleSubmit }) => {
     const handleCategoryClick = (item: string) => {
         setWork((prevWork) => ({ ...prevWork, category: item }));
     };
-
     return (
         <Box sx={{
             bgcolor: "lime",
@@ -279,7 +279,7 @@ const Form: React.FC<FormProps> = ({ type, work, setWork, handleSubmit }) => {
                             </Grid>
                         </div>
                         <Button className="mt-4" variant="contained" color="primary" fullWidth type="submit">
-                            PUBLISH YOUR WORK
+                            {loader ? "submite" : ' PUBLISH YOUR WORK'}
                         </Button>
                     </Box>
                 </form>
