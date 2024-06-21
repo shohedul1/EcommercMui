@@ -29,8 +29,8 @@ interface WorkListProps {
 
 const WorkList: React.FC<WorkListProps> = ({ workList }) => {
     return (
-        <Box sx={{ paddingX: 5, paddingTop: { md: 12, xs: 15}, mb:2 }}>
-            <Grid lg={12} item container spacing={3} >
+        <Box sx={{ paddingX: {sx:2,md:5}, paddingTop: { md: 5, xs: 5}, mb:2 }}>
+            <Grid lg={12} container >
                 {workList.map((work: any) => (
                     <WorkCard
                         key={work._id}

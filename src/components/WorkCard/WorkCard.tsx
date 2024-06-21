@@ -85,10 +85,10 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
         }
     }
     return (
-        <Grid item lg={3} md={4} sm={6} xs={12} p={2} position={"relative"} onClick={() => {
+        <Grid item lg={4} md={4} sm={6} xs={12} p={2} position={"relative"} onClick={() => {
             router.push(`/user/work-details?id=${work._id}`);
         }}>
-            <Card sx={{ maxWidth: 455 }}>
+            <Card>
                 <Box position="relative" display="flex" flex="none" width="100%" height={270} alignItems="center" overflow="hidden">
                     <CardMedia
                         component="img"
@@ -184,6 +184,7 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
                                     }}
                                 >
                                     {creator.username}
+
                                 </Typography>
                                 <Typography>in</Typography>
                                 <Typography>{category}</Typography>
