@@ -47,7 +47,7 @@ const ShopContent = () => {
             )}
 
             {loggedInUserId !== profileId && (
-                <h1 className="title-list">{profile.username}'s Works</h1>
+                <h1 className="title-list">{profile.username}&apos;s Works</h1>
             )}
 
             <WorkList workList={workList} />
