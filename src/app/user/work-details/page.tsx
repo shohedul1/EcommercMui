@@ -303,9 +303,10 @@ const WorkDetailsContent = () => {
                         <Box
                             sx={{
                                 display: 'flex',
-                                gap: 5,
+                                gap: {xs:1,md:3},
                                 alignItems: 'center',
                                 cursor: 'pointer',
+                               
                             }}
                         >
                             <img
@@ -321,9 +322,9 @@ const WorkDetailsContent = () => {
                             <h3>Created by {work?.creator?.username}</h3>
                         </Box>
 
-                        <hr />
+                        <hr  />
 
-                        <h3>About this product</h3>
+                        <h3 style={{marginTop:20}}>About this product</h3>
                         <Typography sx={{ maxWidth: '1200px', my: 2 }} className="max-w-800 my-2">{work.description}</Typography>
 
                         <h1>${work.price}</h1>
