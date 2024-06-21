@@ -41,7 +41,6 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
     const { title, description, price, workPhotoPaths, creator, category } = work;
     const [currentIndex, setCurrentIndex] = useState(0);
     const router = useRouter();
-    console.log(work)
 
     const goToNextSlide = () => {
         setCurrentIndex(prevIndex => (prevIndex + 1) % workPhotoPaths.length);
@@ -104,6 +103,8 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
                     <Box
                         sx={{
                             position: 'absolute',
+                            display: 'flex',
+                            alignItems: 'center',
                             left: 10,
                             top: '50%',
                             transform: 'translateY(-50%)',
@@ -114,7 +115,8 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
                             opacity: 0.5,
                             zIndex: 99,
                             '&:hover': {
-                                bgcolor: 'white',
+                                bgcolor: 'black',
+                                color: 'white'
                             },
                         }}
                         onClick={handlePrevSlideClick}
@@ -124,6 +126,8 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
                     <Box
                         sx={{
                             position: 'absolute',
+                            display: 'flex',
+                            alignItems: 'center',
                             right: 10,
                             top: '50%',
                             transform: 'translateY(-50%)',
@@ -134,7 +138,8 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
                             opacity: 0.5,
                             zIndex: 99,
                             '&:hover': {
-                                bgcolor: 'white',
+                                bgcolor: 'black',
+                                color: 'white'
                             },
                         }}
                         onClick={handleNextSlideClick}

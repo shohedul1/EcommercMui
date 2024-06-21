@@ -19,6 +19,9 @@ import { Avatar } from '@mui/material';
 import Link from 'next/link';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { signOut, useSession } from 'next-auth/react';
+import Input from '@mui/material/Input';
+import { useRouter } from 'next/navigation';
+
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -90,7 +93,14 @@ export default function Navbar() {
     }
 
     const { data: session } = useSession();
-    console.log(session);
+    const user = session?.user
+
+    //searchQuary 
+    const [query, setQuery] = React.useState('')
+    const router = useRouter()
+    const searchWork = async () => {
+        router.push(`/user/search/${query}`)
+    }
 
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
@@ -113,7 +123,7 @@ export default function Navbar() {
                         <Link passHref href="/user/order" style={{ color: 'black', textDecoration: "none" }}>
                             <MenuItem onClick={handleMenuClose} sx={{ fontSize: '15px', fontWeight: 900, '&:hover': { color: "red" } }}>Order</MenuItem>
                         </Link>
-                        <Link passHref href="/user/shop" style={{ color: 'black', textDecoration: "none" }}>
+                        <Link passHref href={`/user/shop/?id=${user?.id}`} style={{ color: 'black', textDecoration: "none" }}>
                             <MenuItem onClick={handleMenuClose} sx={{ fontSize: '15px', fontWeight: 900, '&:hover': { color: "red" } }}>Your Shop</MenuItem>
                         </Link>
                         <Link passHref href="/user/create-work" style={{ color: 'black', textDecoration: "none" }}>
@@ -185,6 +195,7 @@ export default function Navbar() {
                 sx={{
                     bgcolor: 'darkslategray',
                     paddingX: { xs: 1, lg: 5 },
+                    py: 2
                 }}
             >
                 <Toolbar>
@@ -205,15 +216,45 @@ export default function Navbar() {
                     >
                         Ecommerce
                     </Typography>
-                    <Search>
-                        <SearchIconWrapper>
-                            <SearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                            placeholder="Search…"
-                            inputProps={{ 'aria-label': 'search' }}
+                    <Box
+                        sx={{
+                            borderRadius: '10px',
+                            p: 1,
+                            alignItems: 'center',
+                            display: 'flex', // Corrected the display property
+                            border: '1px solid #e0e0e0', // Adding border here
+                            gap: 1,
+                            ml: { sx: 1, md: 5 }
+                        }}
+                    >
+                        <InputBase
+                            type='text'
+                            placeholder='Search...'
+                            sx={{
+                                outline: 'none',
+                                borderBottom: 'none',
+                                color: 'white',
+                                flex: 1,
+                                '& input': {
+                                    padding: '8px',
+                                    color: 'white',
+                                },
+                                '&:hover': {
+                                    borderBottom: 'none',
+                                },
+                                '&:focus': {
+                                    borderBottom: 'none',
+                                },
+                            }}
+
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+
                         />
-                    </Search>
+                        <SearchIcon sx={{ color: 'white' }} onClick={searchWork} />
+                    </Box>
+
+
 
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2, alignItems: 'center', justifyItems: "center" }}>

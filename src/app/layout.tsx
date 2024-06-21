@@ -22,7 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <Navbar />
-          <Box sx={{marginTop:{xs:7,md:8}}}>
+          <Box sx={{ marginTop: { xs: 12, md: 12 } }}>
             {children}
           </Box>
         </AuthProvider>
