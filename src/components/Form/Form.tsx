@@ -1,6 +1,6 @@
 import React from 'react';
 import { categories } from '@/lib/CategoriesData/data';
-import { Grid, Typography, TextField, IconButton, Card, CardMedia, Box, Button, ImageList } from '@mui/material'; // Import Material UI components
+import { Grid, Typography, TextField, Box, Button, CardMedia, ImageList } from '@mui/material'; // Import Material UI components
 import styled from '@emotion/styled'; // Import styled from @emotion/styled
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -66,6 +66,8 @@ const Form: React.FC<FormProps> = ({ type, work, setWork, handleSubmit, loader }
     const handleCategoryClick = (item: string) => {
         setWork((prevWork) => ({ ...prevWork, category: item }));
     };
+
+
     return (
         <Box sx={{
             bgcolor: "lime",
@@ -97,7 +99,7 @@ const Form: React.FC<FormProps> = ({ type, work, setWork, handleSubmit, loader }
                                 display: "flex",
                                 flexWrap: 'wrap',
                                 justifyItems: "between",
-                                gap: { xs: 2, sm: 5, md: 5, lg: 8 }
+                                gap: { xs: 2, lg: 2 }
                             }}
                         >
                             {categories?.map((item, index) => (
@@ -141,26 +143,30 @@ const Form: React.FC<FormProps> = ({ type, work, setWork, handleSubmit, loader }
                                             }}
                                         />
 
-                                        <Button
+                                        <Box
                                             sx={{
-                                                position: "absolute",
+                                                position: 'absolute',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center', // Corrected from justifyItems to justifyContent
                                                 top: 1,
                                                 right: 1,
-                                                p: 1,
-                                                bgcolor: "white",
-                                                borderRadius: "50%",
-                                                color: "black",
+                                                width: '48px', // Adjusted width for the icon container
+                                                height: '48px', // Adjusted height for the icon container
+                                                background: 'white',
+                                                padding: '4px', // Adjusted padding for better icon centering
+                                                borderRadius: '50%',
+                                                color: 'black',
+                                                cursor: 'pointer', // Added cursor pointer for better UX
                                                 '&:hover': {
-                                                    color: "red",
-                                                    bgcolor: "black"
-                                                }
+                                                    color: 'red',
+                                                    bgcolor: 'black',
+                                                },
                                             }}
-                                            type="button"
                                             onClick={() => handleRemovePhoto(index)}
                                         >
                                             <CloseIcon />
-
-                                        </Button>
+                                        </Box>
                                     </Box>
                                 </Grid>
                             ))}

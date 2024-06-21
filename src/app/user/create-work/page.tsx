@@ -95,7 +95,6 @@ const CreateWork: React.FC = () => {
 
 
 
-
   //cloudinary upload name 
   const CLOUD_NAME = "djhjt07rh";
   const UPLOAD_PRESET = "nextjs_blog_images";
@@ -127,7 +126,6 @@ const CreateWork: React.FC = () => {
 
     return uploadedImages.filter(image => image !== null);
   };
-
 
   return (
     <>

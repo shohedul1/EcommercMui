@@ -1,7 +1,7 @@
 
 import { NextRequest } from "next/server.js";
 import connect from '@/lib/mongdb/database';
-import Work from '@/lib/mongdb/Work';
+import Work from '@/lib/models/Work';
 
 interface Params {
     id: string;

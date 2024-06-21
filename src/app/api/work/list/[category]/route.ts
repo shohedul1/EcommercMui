@@ -1,4 +1,4 @@
-import Work from "@/lib/mongdb/Work"
+import Work from "@/lib/models/Work"
 import connect from "@/lib/mongdb/database"
 import { NextRequest } from "next/server"
 

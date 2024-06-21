@@ -1,5 +1,5 @@
 
-import Work from "@/lib/mongdb/Work";
+import Work from "@/lib/models/Work";
 import connect from "@/lib/mongdb/database";
 import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
