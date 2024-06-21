@@ -27,6 +27,7 @@ const initializeState: Work = {
 const CreateWork: React.FC = () => {
   const [work, setWork] = useState<Work>(initializeState);
   const { data: session } = useSession();
+  const userId = session?.user?.id
   const [loader, setLoader] = useState(false);
   const router = useRouter();
 
@@ -73,7 +74,7 @@ const CreateWork: React.FC = () => {
           });
           setWork(initializeState);
           setTimeout(() => {
-            router.push('/user/shop');
+            router.push(`/user/shop/?id=${userId}`);
           }, 1000);
         } else {
           toast.error(data.message, {
