@@ -99,7 +99,7 @@ const Form: React.FC<FormProps> = ({ type, work, setWork, handleSubmit, loader }
                                 display: "flex",
                                 flexWrap: 'wrap',
                                 justifyItems: "between",
-                                gap: { xs: 2, lg: 2 }
+                                gap: { xs: 2, lg: 5 }
                             }}
                         >
                             {categories?.map((item, index) => (
@@ -107,9 +107,15 @@ const Form: React.FC<FormProps> = ({ type, work, setWork, handleSubmit, loader }
                                     key={index}
                                     isActive={work.category === item}
                                     onClick={() => handleCategoryClick(item)}
-                                    variant='h6' // Assuming CategoryItem can handle this variant
+                                    variant='h6' 
                                 >
-                                    {item}
+                                   <Typography
+                                   sx={{
+                                    fontSize:'24px'
+                                   }}
+                                   >
+                                   {item}
+                                   </Typography>
                                 </CategoryItem>
 
                             ))}
