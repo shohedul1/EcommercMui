@@ -1,6 +1,8 @@
 'use client';
+import { store } from '@/lib/redux/store';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { SessionProvider } from 'next-auth/react';
+import { Provider } from 'react-redux';
 
 
 const AuthProvider = ({
@@ -10,10 +12,12 @@ const AuthProvider = ({
 }>) => {
     return (
         <AppRouterCacheProvider>
-            <SessionProvider>
-            {children}
-            </SessionProvider>
-           </AppRouterCacheProvider>
+            <Provider store={store}>
+                <SessionProvider>
+                    {children}
+                </SessionProvider>
+            </Provider>
+        </AppRouterCacheProvider>
     )
 }
 

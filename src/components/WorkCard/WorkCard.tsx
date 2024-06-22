@@ -41,6 +41,7 @@ const WorkCard: React.FC<WorkProps> = ({ work }) => {
     const { title, description, price, workPhotoPaths, creator, category } = work;
     const [currentIndex, setCurrentIndex] = useState(0);
     const router = useRouter();
+    console.log('cardPage', work)
 
     const goToNextSlide = () => {
         setCurrentIndex(prevIndex => (prevIndex + 1) % workPhotoPaths.length);

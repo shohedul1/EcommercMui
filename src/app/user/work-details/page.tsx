@@ -8,9 +8,11 @@ import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import EditIcon from '@mui/icons-material/Edit';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import Image from 'next/image';
 import { BorderAll } from '@mui/icons-material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '@/lib/redux/shoppingSlice';
+import Notification from '@/components/Notification/Notification';
 
 
 interface ProfileImagePath {
@@ -89,6 +91,9 @@ const WorkDetailsContent = () => {
         setSelectedPhoto(index);
         setCurrentIndex(index);
     };
+
+    const dispatch = useDispatch();
+
 
 
     return (
@@ -303,10 +308,10 @@ const WorkDetailsContent = () => {
                         <Box
                             sx={{
                                 display: 'flex',
-                                gap: {xs:1,md:3},
+                                gap: { xs: 1, md: 3 },
                                 alignItems: 'center',
                                 cursor: 'pointer',
-                               
+
                             }}
                         >
                             <img
@@ -322,9 +327,9 @@ const WorkDetailsContent = () => {
                             <h3>Created by {work?.creator?.username}</h3>
                         </Box>
 
-                        <hr  />
+                        <hr />
 
-                        <h3 style={{marginTop:20}}>About this product</h3>
+                        <h3 style={{ marginTop: 20 }}>About this product</h3>
                         <Typography sx={{ maxWidth: '1200px', my: 2 }} className="max-w-800 my-2">{work.description}</Typography>
 
                         <h1>${work.price}</h1>
@@ -344,13 +349,16 @@ const WorkDetailsContent = () => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 1
-                            }}>
-                            <ShoppingCartIcon/>
+                            }}
+                            onClick={() => dispatch(addToCart(work))}
+                        >
+                            <ShoppingCartIcon />
                             ADD TO CART
                         </Button>
                     </Box>
                 )
             }
+            <Notification/>
         </>
     );
 };

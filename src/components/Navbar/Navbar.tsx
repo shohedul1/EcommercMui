@@ -1,7 +1,7 @@
+
 'use client';
 
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -19,52 +19,17 @@ import { Avatar } from '@mui/material';
 import Link from 'next/link';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { signOut, useSession } from 'next-auth/react';
-import Input from '@mui/material/Input';
 import { useRouter } from 'next/navigation';
-
-
-const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(3),
-        width: 'auto',
-    },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-        padding: theme.spacing(1, 1, 1, 0),
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('md')]: {
-            width: '20ch',
-        },
-    },
-}));
+import { useSelector } from 'react-redux';
 
 export default function Navbar() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -92,15 +57,24 @@ export default function Navbar() {
         handleMobileMenuClose();
     }
 
-    const { data: session } = useSession();
-    const user = session?.user
-
-    //searchQuary 
-    const [query, setQuery] = React.useState('')
-    const router = useRouter()
-    const searchWork = async () => {
-        router.push(`/user/search/${query}`)
+    const handleCart = () => {
+        router.push("/user/cart")
+        setAnchorEl(null);
+        handleMobileMenuClose();
     }
+
+    const { data: session } = useSession();
+    const user = session?.user;
+
+    //searchQuery 
+    const [query, setQuery] = React.useState('');
+    const router = useRouter();
+    const searchWork = async () => {
+        router.push(`/user/search/${query}`);
+    }
+
+    //redux
+    const { productData } = useSelector((state: any) => state.shopping);
 
     const menuId = 'primary-search-account-menu';
     const renderMenu = (
@@ -153,14 +127,19 @@ export default function Navbar() {
             keepMounted
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
+            sx={{ mt: 2 }}
         >
-            <MenuItem>
+            <MenuItem onClick={handleCart}>
+
                 <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="error">
-                        <ShoppingCartIcon />
-                    </Badge>
+                    {mounted && (
+                        <Badge badgeContent={productData ? productData.length : "0"} color="error" sx={{ mr: 2 }}>
+                            <ShoppingCartIcon sx={{ color: "black" }} />
+                        </Badge>
+                    )}
+                    <p>cart</p>
                 </IconButton>
-                <p>Cart</p>
+
             </MenuItem>
             <MenuItem onClick={handleProfileMenuOpen}>
                 <IconButton
@@ -221,8 +200,8 @@ export default function Navbar() {
                             borderRadius: '10px',
                             p: 1,
                             alignItems: 'center',
-                            display: 'flex', // Corrected the display property
-                            border: '1px solid #e0e0e0', // Adding border here
+                            display: 'flex',
+                            border: '1px solid #e0e0e0',
                             gap: 1,
                             ml: { sx: 1, md: 5 }
                         }}
@@ -246,26 +225,22 @@ export default function Navbar() {
                                     borderBottom: 'none',
                                 },
                             }}
-
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-
                         />
                         <SearchIcon sx={{ color: 'white' }} onClick={searchWork} />
                     </Box>
-
-
-
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2, alignItems: 'center', justifyItems: "center" }}>
                         <Link href={"/user/cart"}>
                             <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                                <Badge badgeContent={40} color="error">
-                                    <ShoppingCartIcon sx={{ color: "white" }} />
-                                </Badge>
+                                {mounted && (
+                                    <Badge badgeContent={productData.length} color="error">
+                                        <ShoppingCartIcon sx={{ color: "white" }} />
+                                    </Badge>
+                                )}
                             </IconButton>
                         </Link>
-
                         <IconButton
                             size="large"
                             edge="end"
@@ -280,8 +255,8 @@ export default function Navbar() {
                                     alt="User Avatar"
                                     src={
                                         typeof session?.user?.profileImagePath === "string"
-                                            ? session?.user?.profileImagePath // If it's already a string (direct URL)
-                                            : session?.user?.profileImagePath?.url // If it's an object, access the url property
+                                            ? session?.user?.profileImagePath
+                                            : session?.user?.profileImagePath?.url
                                     }
                                 />
                             ) : (
@@ -308,3 +283,5 @@ export default function Navbar() {
         </Box>
     );
 }
+
+
