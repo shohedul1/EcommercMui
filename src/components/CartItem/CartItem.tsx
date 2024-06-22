@@ -110,8 +110,9 @@ const CartItem = () => {
                             mt: { xs: 2, md: 0 }
                         }}
                     >
-                        <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
-                            {item.price * item.qty} {/* Replace with your subtotal logic */}
+                        <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', }}>
+                            <p>${item.price}</p>
+                            <p>${item.price * item.qty}</p>
                         </Typography>
                     </Box>
                 </Box>

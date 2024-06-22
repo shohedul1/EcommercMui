@@ -1,7 +1,6 @@
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-
-
 
 interface WorkPhotoPath {
     [key: string]: any;  // Adjust the type as necessary
@@ -18,10 +17,15 @@ interface Product {
     total?: number;
 }
 
+interface Order {
+    order: Product[];
+    id: string;
+}
+
 interface InitialState {
     productData: Product[];
     userInfo: any;
-    orderData: any[];
+    orderData: Order[];
 }
 
 const initialState: InitialState = {
@@ -79,8 +83,8 @@ export const shoppingSlice = createSlice({
         deleteUser: (state) => {
             state.userInfo = null;
         },
-        saveOrder: (state, action: PayloadAction<any[]>) => {
-            state.orderData = action.payload;
+        saveOrder: (state, action: PayloadAction<Order>) => {
+            state.orderData.push(action.payload);
         },
         resetOrder: (state) => {
             state.orderData = [];
@@ -101,3 +105,4 @@ export const {
 } = shoppingSlice.actions;
 
 export default shoppingSlice.reducer;
+

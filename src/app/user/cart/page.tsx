@@ -13,6 +13,7 @@ import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import Link from 'next/link';
 import { resetCart } from '@/lib/redux/shoppingSlice';
 import CartItem from '@/components/CartItem/CartItem';
+import PaymentForm from '@/components/PaymentForm/PaymentForm';
 
 // Navbar component
 export default function Cart() {
@@ -35,8 +36,10 @@ export default function Cart() {
       {/* Conditional rendering based on productData and loading state */}
       {!loading ? (
         <Box sx={{
-          maxWidth: '100vw', // Assuming you want to use full viewport width
+          maxWidth: '100vw',
+          height: '100%',
           marginX: 'auto', // Center align horizontally
+          background: '#dedede',
           padding: {
             xs: 4,  // Padding for extra small screens
             xl: 12, // Padding for extra large screens
@@ -75,42 +78,48 @@ export default function Cart() {
                       reset cart
                     </Button>
                   </Box>
-                  {/* <PaymentForm /> */}
+                  <PaymentForm />
                 </Box>
               </Box>
             ) : (
               <Box
                 sx={{
+                  maxWidth: '100vw',
+                  height: '100vh',
+                  marginX: 'auto', // Center align horizontally
+                  background: '#dedede',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 6,
                   alignItems: 'center',
-                  justifyItems: 'center',
-                  bgcolor: 'white',
-                  height: 96,
+                  gap: 6,
                   px: 4
                 }}
               >
                 <Typography sx={{
+                  mt: 2,
                   border: '1px solid red',
                   p: 2,
                   width: '100%',
-                  alignItems: 'center'
-                }} >Your product Cart is currently empty</Typography>
-                <Link href={"/"} style={{textDecoration:'none'}}>
-                  <Typography 
-                  sx={{
-                    bgcolor:'black',
-                    color:'white',
-                    py:2,
-                    px:6,
-                    "&:hover":{
-                      bgcolor:'red',
-                      transition:200,
-                      color:'white'
-                    }
-                  }}
-                  className="bg-darkText text-white py-2 px-6 rounded-md hover:bg-orange-600 duration-150">Return to shop</Typography>
+                  textAlign: 'center'
+                }} >
+                  Your product Cart is currently empty
+                </Typography>
+                <Link href={"/"} style={{ textDecoration: 'none' }}>
+                  <Typography
+                    sx={{
+                      bgcolor: 'black',
+                      color: 'white',
+                      py: 2,
+                      px: 6,
+                      "&:hover": {
+                        bgcolor: 'red',
+                        transition: 200,
+                        color: 'white'
+                      }
+                    }}
+                  >
+                    Return to shop
+                  </Typography>
                 </Link>
               </Box>
             )
