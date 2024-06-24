@@ -4,7 +4,7 @@ import Form from "@/components/Form/Form";
 import Notification from "@/components/Notification/Notification";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 
@@ -27,7 +27,7 @@ const initializeState: Work = {
     photos: [], // Initially empty
 };
 
-const UpdatedWork: React.FC = () => {
+const UpdatedWorkContent: React.FC = () => {
     const { data: session } = useSession();
     const [loader, setLoader] = useState(false);
     const [work, setWork] = useState<Work>(initializeState); // Use Work interface here
@@ -172,6 +172,15 @@ const UpdatedWork: React.FC = () => {
                 loader={loader}
             />
         </>
+    );
+};
+
+
+const UpdatedWork = () => {
+    return (
+        <Suspense>
+            <UpdatedWorkContent />
+        </Suspense>
     );
 };
 
