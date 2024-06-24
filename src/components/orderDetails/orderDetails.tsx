@@ -164,15 +164,15 @@ const OrderDetails = () => {
                                 maxWidth: '100%',
                                 height: '100vh',
                                 backgroundColor: '#dedede',
-                                display:'flex',
-                                alignItems:'center',
-                                gap:2,
-                                flexDirection:'column',
-                                justifyContent:"center"
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 2,
+                                flexDirection: 'column',
+                                justifyContent: "center"
 
                             }}
-                            className='py-10 bg-white text-black text-2xl text-center'>
-                            <Typography variant='body1'>Nothing to show</Typography>
+                        >
+                            <Typography variant='body1'>Nothing to show </Typography>
                             <Link href={'/'}>
                                 <Button
                                     className='bg-black mt-2 text-slate-100 w-44 h-12 rounded-full text-base font-semibold hover:bg-orange-600 duration-300'

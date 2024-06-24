@@ -1,5 +1,4 @@
 'use client';
-
 import { Box, Button, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -10,20 +9,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { BorderAll } from '@mui/icons-material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '@/lib/redux/shoppingSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, addToFavorite, deleteFavorite } from '@/lib/redux/shoppingSlice';
 import Notification from '@/components/Notification/Notification';
-
-
-interface ProfileImagePath {
-    url: string;
-}
+import { toast } from 'react-toastify';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 interface Creator {
     _id: string;
     username: string;
     email: string;
-    profileImagePath: string | ProfileImagePath;
+    profileImagePath: ProfileImagePath[];
 }
 
 interface Work {
@@ -33,8 +29,14 @@ interface Work {
     description: string;
     price: number;
     title: string;
-    workPhotoPaths: { url: string }[];
+    workPhotoPaths: ProfileImagePath[];
 }
+
+interface ProfileImagePath {
+    id: string;
+    url: string;
+}
+
 
 const WorkDetailsContent = () => {
     const [work, setWork] = useState<Work | null>(null);
@@ -93,276 +95,292 @@ const WorkDetailsContent = () => {
     };
 
     const dispatch = useDispatch();
+    const favoriteData = useSelector((state: { shopping: { favoriteData: Work[] } }) => state.shopping.favoriteData);
 
+    // Check if work is null before accessing its properties
+    const isFavorite = work && favoriteData?.some((item: Work) => item._id === work._id);
 
+    const handleFavoriteClick = () => {
+        if (session) {
+            if (work && isFavorite) {
+                dispatch(deleteFavorite(work._id));
+                toast.error(`${work.title} removed from favorites!`, { position: 'top-center' });
+            } else if (work) {
+                dispatch(addToFavorite(work));
+                toast.success(`${work.title} added to favorites!`, { position: 'top-center' });
+            }
+        } else {
+            router.push('/login')
+        }
+    };
 
     return (
         <>
-            {
-                work && (
+            {work && (
+                <Box
+                    sx={{
+                        pt: 10,
+                        px: { xs: 2, md: 20 },
+                    }}
+                >
                     <Box
                         sx={{
-                            pt: 10,
-                            px: { xs: 2, md: 20 },
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: { xs: "center", sm: 'start' },
+                            flexDirection: { sm: 'column' },
+                            gap: { sm: 2.5 }
+                        }}
+                    >
+                        <Typography sx={{
+                            fontSize: "20px"
+                        }}>
+                            {work.title}
+                        </Typography>
+                        {work.creator._id === userId ? (
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1,
+                                    cursor: "pointer"
+                                }}
+                                onClick={() => {
+                                    router.push(`/user/update-work?id=${workId}`);
+                                }}
+                            >
+                                <EditIcon />
+                                <Typography
+                                    sx={{
+                                        fontSize: '20px',
+                                        fontWeight: "bold",
+                                        "&:hover": {
+                                            color: "red"
+                                        }
+                                    }}
+                                >
+                                    Edit
+                                </Typography>
+                            </Box>
+                        ) : (
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: "center",
+                                    gap: 1,
+                                    cursor: "pointer"
+                                }}>
+                                {
+                                    isFavorite ? (
+                                        <FavoriteIcon
+                                            sx={{ color: 'red' }}
+                                            onClick={handleFavoriteClick}
+                                        />
+                                    ) : (
+
+                                        <FavoriteBorderIcon
+                                            sx={{ color: 'red' }}
+                                            onClick={handleFavoriteClick}
+                                        />
+                                    )
+
+                                }
+                                <Typography sx={{
+                                    fontSize: "20px",
+                                    fontWeight: 'bold',
+                                    "&:hover": {
+                                        color: "red"
+                                    }
+                                }}>
+                                    Save
+                                </Typography>
+                            </Box>
+                        )}
+                    </Box>
+
+                    <Box
+                        sx={{
+                            maxWidth: 800,
+                            overflow: 'hidden',
+                            borderRadius: 2,
+                            my: 10,
                         }}
                     >
                         <Box
                             sx={{
                                 display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: { xs: "center", sm: 'start' },
-                                flexDirection: { sm: 'column' },
-                                gap: { sm: 2.5 }
+                                transition: 'transform 0.5s ease',
+                                transform: `translateX(-${currentIndex * 100}%)`,
                             }}
                         >
-                            <Typography sx={{
-                                fontSize: "20px"
-                            }}>
-                                {work.title}
-                            </Typography>
-                            {work.creator._id === userId ? (
+                            {work.workPhotoPaths.map((photo, index) => (
                                 <Box
+                                    key={index}
                                     sx={{
+                                        position: 'relative',
+                                        flex: 'none',
+                                        width: '100%',
+                                        height: 'auto',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: 1,
-                                        cursor: "pointer"
-                                    }}
-                                    onClick={() => {
-                                        router.push(`/update-work?id=${workId}`);
                                     }}
                                 >
-                                    <EditIcon />
-                                    <Typography
-                                        sx={{
-                                            fontSize: '20px',
-                                            fontWeight: "bold",
-                                            "&:hover": {
-
-                                                color: "red"
-
-                                            }
+                                    <img src={photo.url}
+                                        alt="work"
+                                        style={{
+                                            width: '100%',
+                                            height: '500px',
+                                            objectFit: 'fill',
                                         }}
+                                    />
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            display: "flex",
+                                            alignItems: "center",
+                                            left: 2.5,
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            p: 1.5,
+                                            borderRadius: '50%',
+                                            cursor: 'pointer',
+                                            bgcolor: 'white',
+                                            opacity: 0.7,
+                                            zIndex: 99,
+                                            '&:hover': {
+                                                bgcolor: 'white',
+                                            },
+                                        }}
+                                        onClick={goToPrevSlide}
                                     >
-                                        Edit
-                                    </Typography>
+                                        <ArrowCircleRightIcon />
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            display: "flex",
+                                            alignItems: "center",
+                                            right: 2.5,
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            p: 1.5,
+                                            borderRadius: '50%',
+                                            cursor: 'pointer',
+                                            bgcolor: 'white',
+                                            opacity: 0.7,
+                                            zIndex: 99,
+                                            '&:hover': {
+                                                bgcolor: 'white',
+                                            },
+                                        }}
+                                        onClick={goToNextSlide}
+                                    >
+                                        <ArrowCircleLeftIcon />
+                                    </Box>
                                 </Box>
-                            ) : (
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: "center",
-                                        gap: 1,
-                                        cursor: "pointer"
-                                    }}>
-                                    {/* {isLiked ? (
-                                        <MdFavorite className="text-red-500" />
-                                    ) : (
-                                        <MdFavoriteBorder />
-                                    )} */}
-                                    <FavoriteBorderIcon />
-                                    <Typography sx={{
-                                        fontSize: "20px",
-                                        fontWeight: 'bold',
-                                        "&:hover": {
-                                            color: "red"
-                                        }
-                                    }}>
-                                        Save
-                                    </Typography>
-                                </Box>
-                            )}
+                            ))}
                         </Box>
+                    </Box>
 
-                        <Box
-                            sx={{
-                                maxWidth: 800,
-                                overflow: 'hidden',
-                                borderRadius: 2,
-                                my: 10,
-                            }}
-                        >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 2.5,
+                            my: 5,
+                        }}
+                    >
+                        {work.workPhotoPaths.slice(0, visiblePhotos).map((photo, index) => (
+                            <Box
+                                key={index}
+                                component="img"
+                                src={photo.url}
+                                alt="work-demo"
+                                onClick={() => handleSelectedPhoto(index)}
+                                sx={{
+                                    cursor: 'pointer',
+                                    width: 144,
+                                    height: 'auto',
+                                    border: selectedPhoto === index ? '2px solid black' : 'none',
+                                }}
+                            />
+                        ))}
+
+                        {visiblePhotos < work.workPhotoPaths.length && (
                             <Box
                                 sx={{
                                     display: 'flex',
-                                    transition: 'transform 0.5s ease',
-                                    transform: `translateX(-${currentIndex * 100}%)`,
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
                                 }}
+                                onClick={loadMorePhotos}
                             >
-                                {work.workPhotoPaths.map((photo, index) => (
-                                    <Box
-                                        key={index}
-                                        sx={{
-                                            position: 'relative',
-                                            flex: 'none',
-                                            width: '100%',
-                                            height: 'auto',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                        }}
-                                    >
-
-                                        <img src={photo.url}
-                                            alt="work"
-                                            style={{
-                                                width: '100%',
-                                                height: '500px',
-                                                objectFit: 'fill',
-                                            }}
-                                        />
-                                        <Box
-                                            sx={{
-                                                position: 'absolute',
-                                                display: "flex",
-                                                alignItems: "center",
-                                                left: 2.5,
-                                                top: '50%',
-                                                transform: 'translateY(-50%)',
-                                                p: 1.5,
-                                                borderRadius: '50%',
-                                                cursor: 'pointer',
-                                                bgcolor: 'white',
-                                                opacity: 0.7,
-                                                zIndex: 99,
-                                                '&:hover': {
-                                                    bgcolor: 'white',
-                                                },
-                                            }}
-                                            onClick={goToPrevSlide}
-                                        >
-                                            <ArrowCircleRightIcon />
-                                        </Box>
-                                        <Box
-                                            sx={{
-                                                position: 'absolute',
-                                                display: "flex",
-                                                alignItems: "center",
-                                                right: 2.5,
-                                                top: '50%',
-                                                transform: 'translateY(-50%)',
-                                                p: 1.5,
-                                                borderRadius: '50%',
-                                                cursor: 'pointer',
-                                                bgcolor: 'white',
-                                                opacity: 0.7,
-                                                zIndex: 99,
-                                                '&:hover': {
-                                                    bgcolor: 'white',
-                                                },
-                                            }}
-                                            onClick={goToNextSlide}
-                                        >
-                                            <ArrowCircleLeftIcon />
-                                        </Box>
-                                    </Box>
-                                ))}
+                                <BorderAll sx={{ fontSize: '40px' }} />
+                                Show More
                             </Box>
-                        </Box>
-
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                gap: 2.5,
-                                my: 5,
-                            }}
-                        >
-                            {work.workPhotoPaths.slice(0, visiblePhotos).map((photo, index) => (
-                                <Box
-                                    key={index}
-                                    component="img"
-                                    src={photo.url}
-                                    alt="work-demo"
-                                    onClick={() => handleSelectedPhoto(index)}
-                                    sx={{
-                                        cursor: 'pointer',
-                                        width: 144, // equivalent to w-36 in Tailwind (36 * 4px = 144px)
-                                        height: 'auto',
-                                        border: selectedPhoto === index ? '2px solid black' : 'none',
-                                    }}
-                                />
-
-                            ))}
-
-
-
-                            {visiblePhotos < work.workPhotoPaths.length && (
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        cursor: 'pointer',
-                                    }}
-                                    onClick={loadMorePhotos}
-                                >
-                                    <BorderAll sx={{ fontSize: '40px' }} />
-                                    Show More
-                                </Box>
-                            )}
-                        </Box>
-
-                        <hr className="my-5" />
-
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                gap: { xs: 1, md: 3 },
-                                alignItems: 'center',
-                                cursor: 'pointer',
-
-                            }}
-                        >
-                            <img
-                                src={typeof work.creator.profileImagePath === 'string' ? work.creator.profileImagePath : work.creator.profileImagePath.url}
-                                alt="profile"
-                                style={{
-                                    width: '40px',
-                                    height: "40px",
-                                    borderRadius: "50%"
-                                }}
-                                onClick={() => router.push(`/shop?id=${work?.creator?._id}`)}
-                            />
-                            <h3>Created by {work?.creator?.username}</h3>
-                        </Box>
-
-                        <hr />
-
-                        <h3 style={{ marginTop: 20 }}>About this product</h3>
-                        <Typography sx={{ maxWidth: '1200px', my: 2 }} className="max-w-800 my-2">{work.description}</Typography>
-
-                        <h1>${work.price}</h1>
-                        <Button
-                            type="submit"
-                            sx={{
-                                my: 5,
-                                px: 2,
-                                py: 2,
-                                backgroundColor: 'red',
-                                color: 'white',
-                                fontWeight: 'bold',
-                                '&:hover': {
-                                    backgroundColor: 'black',
-                                    boxShadow: 2
-                                },
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1
-                            }}
-                            onClick={() => dispatch(addToCart(work))}
-                        >
-                            <ShoppingCartIcon />
-                            ADD TO CART
-                        </Button>
+                        )}
                     </Box>
-                )
-            }
-            <Notification/>
+
+                    <hr className="my-5" />
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            gap: { xs: 1, md: 3 },
+                            alignItems: 'center',
+                            cursor: 'pointer',
+
+                        }}
+                    >
+                        <img
+                            src={typeof work.creator.profileImagePath === 'string' ? work.creator.profileImagePath : work.creator.profileImagePath.url}
+                            alt="profile"
+                            style={{
+                                width: '40px',
+                                height: "40px",
+                                borderRadius: "50%"
+                            }}
+                            onClick={() => router.push(`/shop?id=${work?.creator?._id}`)}
+                        />
+                        <h3>Created by {work?.creator?.username}</h3>
+                    </Box>
+
+                    <hr />
+
+                    <h3 style={{ marginTop: 20 }}>About this product</h3>
+                    <Typography sx={{ maxWidth: '1200px', my: 2 }} className="max-w-800 my-2">{work.description}</Typography>
+
+                    <h1>${work.price}</h1>
+                    <Button
+                        type="submit"
+                        sx={{
+                            my: 5,
+                            px: 2,
+                            py: 2,
+                            backgroundColor: 'red',
+                            color: 'white',
+                            fontWeight: 'bold',
+                            '&:hover': {
+                                backgroundColor: 'black',
+                                boxShadow: 2
+                            },
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
+                        }}
+                        onClick={() => dispatch(addToCart(work))}
+                    >
+                        <ShoppingCartIcon />
+                        ADD TO CART
+                    </Button>
+                </Box>
+            )}
+            <Notification />
         </>
     );
 };
-
 
 const WorkDetails = () => {
     return (

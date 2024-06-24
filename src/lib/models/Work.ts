@@ -17,7 +17,10 @@ const WorkSchema = new Schema({
     price: {
         type: Number
     },
-    workPhotoPaths: [{ type: Object }]
+    workPhotoPaths: [{
+        id: String,
+        url: String
+    }]
 })
 
 const Work = models.Work || model("Work", WorkSchema)

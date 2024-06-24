@@ -2,6 +2,7 @@
 import { Box, Grid } from '@mui/material';
 import React from 'react';
 import WorkCard from '../WorkCard/WorkCard';
+import Notification from '../Notification/Notification';
 
 interface WorkPhotoPath {
     id: string;
@@ -38,6 +39,8 @@ const WorkList: React.FC<WorkListProps> = ({ workList }) => {
                     />
                 ))}
             </Grid>
+            <Notification />
+
 
         </Box>
     );

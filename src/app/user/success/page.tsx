@@ -1,24 +1,45 @@
-import { Box } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Link from "next/link";
 
 const SuccessPage = () => {
   return (
-    <Box className="flex items-center justify-center py-20">
-        <div className="min-h-[400px] flex flex-col items-center justify-center gap-y-5">
-            <h2 className="text-4xl font-bold">Your Payme Accepted by shoppingmart.com</h2>
-            <p>Now you can view your Orders or continue Shopping with us</p>
-            <div className="flex items-center justify-center gap-x-5">
-                <Link href={"/order"}>
-                <button className="bg-black text-slate-100 w-44 h-12 rounded-full text-base font-semibold hover:bg-orange-600 duration-300">View Orders</button>
-                </Link>
-                <Link href={"/"}>
-                <button className="bg-black text-slate-100 w-44 h-12 rounded-full text-base font-semibold hover:bg-orange-600 duration-300">Continue Shopping</button> 
-                </Link>
-            </div>
-        </div>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        py: 20,
+      }}
+    >
+      <Box
+        sx={{
+          maxWidth: '90%',
+          width: '100%',
+          textAlign: 'center',
+        }}
+      >
+        <Typography sx={{ fontSize: { xs: '24px', md: '32px' }, fontWeight: 700, }}>Your Payment Accepted by shoppingmart.com</Typography>
+        <Typography sx={{ fontSize: { xs: '16px', md: '18px' }, mt: 2 }}>Now you can view your orders or continue shopping with us.</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: { xs: 3, md: 5 },
+            mt: 3,
+          }}
+        >
+          <Link href="/user/order" passHref>
+            <Button variant="contained" sx={{ width: { xs: '100%', md: 'auto' } }}>View Orders</Button>
+          </Link>
+          <Link href="/" passHref>
+            <Button variant="outlined" sx={{ width: { xs: '100%', md: 'auto' } }}>Continue Shopping</Button>
+          </Link>
+        </Box>
+      </Box>
     </Box>
-   
-  )
-}
+  );
+};
 
 export default SuccessPage;

@@ -1,9 +1,9 @@
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 
 interface WorkPhotoPath {
-    [key: string]: any;  // Adjust the type as necessary
+    id: string;
+    url: string;
 }
 
 interface Product {
@@ -26,12 +26,14 @@ interface InitialState {
     productData: Product[];
     userInfo: any;
     orderData: Order[];
+    favoriteData: Product[];
 }
 
 const initialState: InitialState = {
     productData: [],
     userInfo: null,
     orderData: [],
+    favoriteData: []
 };
 
 export const shoppingSlice = createSlice({
@@ -45,10 +47,7 @@ export const shoppingSlice = createSlice({
             } else {
                 toast(`${action.payload.title} added successfully`);
                 const total = action.payload.price;
-                state.productData = [
-                    ...state.productData,
-                    { ...action.payload, qty: 1, total: total },
-                ];
+                state.productData.push({ ...action.payload, qty: 1, total: total });
             }
         },
         increaseQty: (state, action: PayloadAction<string>) => {
@@ -74,9 +73,23 @@ export const shoppingSlice = createSlice({
         resetCart: (state) => {
             state.productData = [];
         },
-        deleteProduct: (state, action) => {
+        deleteProduct: (state, action: PayloadAction<string>) => {
             state.productData = state.productData.filter((item) => item._id !== action.payload);
         },
+        addToFavorite: (state, action: PayloadAction<Product>) => {
+            const existingProduct = state.favoriteData.find((item) => item._id === action.payload._id);
+            if (existingProduct) {
+                state.favoriteData = state.favoriteData.filter((item) => item._id !== action.payload._id);
+            } else {
+                state.favoriteData.push(action.payload);
+                // toast(`${action.payload.title} added successfully`);
+            }
+        },
+        deleteFavorite: (state, action: PayloadAction<string>) => {
+            state.favoriteData = state.favoriteData.filter((item) => item._id !== action.payload);
+
+        },
+
         addUser: (state, action: PayloadAction<any>) => {
             state.userInfo = action.payload;
         },
@@ -98,6 +111,8 @@ export const {
     decreaseQty,
     deleteProduct,
     resetCart,
+    addToFavorite,
+    deleteFavorite,
     addUser,
     deleteUser,
     saveOrder,
@@ -105,4 +120,3 @@ export const {
 } = shoppingSlice.actions;
 
 export default shoppingSlice.reducer;
-
