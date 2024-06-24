@@ -45,7 +45,6 @@ const WorkDetailsContent = () => {
     const router = useRouter();
     const { data: session } = useSession();
     const userId = session?.user?.id;
-    console.log('work',work)
 
     useEffect(() => {
         const getWorkDetails = async () => {

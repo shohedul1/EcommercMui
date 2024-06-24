@@ -14,7 +14,6 @@ const OrderDetails = () => {
     setIsLoading(false); // Simulating end of loading for demonstration purposes
   }, []);
 
-  console.log('favoriteData', favoriteData)
 
 
 
