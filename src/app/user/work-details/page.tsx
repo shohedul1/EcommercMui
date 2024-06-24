@@ -168,7 +168,7 @@ const WorkDetailsContent = () => {
                     <hr className="my-5" />
 
                     <Box sx={{ display: 'flex', gap: { xs: 1, md: 3 }, alignItems: 'center', cursor: 'pointer', }}>
-                        <img src={work.creator.profileImagePath.url} alt="profile" style={{ width: '40px', height: "40px", borderRadius: "50%" }} onClick={() => router.push(`/shop?id=${work?.creator?._id}`)} />
+                        <img src={work?.creator?.profileImagePath?.url} alt="profile" style={{ width: '40px', height: "40px", borderRadius: "50%" }} onClick={() => router.push(`/shop?id=${work?.creator?._id}`)} />
                         <h3>Created by {work?.creator?.username}</h3>
                     </Box>
 
