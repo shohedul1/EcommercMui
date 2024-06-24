@@ -43,8 +43,9 @@ const WorkDetailsContent = () => {
     const searchParams = useSearchParams();
     const workId = searchParams.get('id');
     const router = useRouter();
-    const { data: session, update } = useSession();
+    const { data: session } = useSession();
     const userId = session?.user?.id;
+    console.log('work',work)
 
     useEffect(() => {
         const getWorkDetails = async () => {
@@ -168,7 +169,10 @@ const WorkDetailsContent = () => {
                     <hr className="my-5" />
 
                     <Box sx={{ display: 'flex', gap: { xs: 1, md: 3 }, alignItems: 'center', cursor: 'pointer', }}>
-                        <img src={work?.creator?.profileImagePath?.url} alt="profile" style={{ width: '40px', height: "40px", borderRadius: "50%" }} onClick={() => router.push(`/shop?id=${work?.creator?._id}`)} />
+                        <img src={typeof work?.creator?.profileImagePath === 'string' ? work?.creator?.profileImagePath : work?.creator?.profileImagePath.url}
+                            alt="profile"
+                            style={{ width: '40px', height: "40px", borderRadius: "50%" }}
+                            onClick={() => router.push(`/user/shop?id=${work?.creator?._id}`)} />
                         <h3>Created by {work?.creator?.username}</h3>
                     </Box>
 
