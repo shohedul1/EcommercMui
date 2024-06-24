@@ -12,7 +12,8 @@ interface Work {
   title: string;
   description: string;
   price: string;
-  photos: File[];
+  photos: (File | { id: string, url: string })[];
+
 }
 
 const initializeState: Work = {
