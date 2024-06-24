@@ -13,7 +13,7 @@ interface FormProps {
         title: string;
         description: string;
         price: string;
-        photos: File[]; // Ensure photos are of type File
+        photos: (File | { id: string, url: string })[];
     };
     setWork: React.Dispatch<React.SetStateAction<{
         creator: string;
@@ -21,7 +21,7 @@ interface FormProps {
         title: string;
         description: string;
         price: string;
-        photos: File[];
+        photos: (File | { id: string, url: string })[];
     }>>;
     handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
     loader: boolean;

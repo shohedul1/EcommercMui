@@ -7,14 +7,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+
 interface Work {
     creator: string;
     category: string;
     title: string;
     description: string;
     price: string;
-    photos: (File | { id: string, url: string })[]; // Adjusted type for photos
+    photos: (File | { id: string, url: string })[];
 }
+
 
 const initializeState: Work = {
     creator: "",
