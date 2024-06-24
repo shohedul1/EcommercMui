@@ -21,7 +21,6 @@ const Feed = () => {
         getWorkList();
     }, [selectedCategory]);
 
-    console.log('workList', workList)
 
     return (
         <>
